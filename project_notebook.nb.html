@@ -1752,20 +1752,85 @@ display: none;
 
 
 <!-- rnb-text-begin -->
+<div id="read-both-tables-into-dataset" class="section level1">
+<h1>Read both tables into dataset</h1>
+<p>train &lt;-
+read.table(“C:/Users/lucas/OneDrive/Documents/GitHub/STAT361-Project/STAT361-Project/dataset/train.csv”,header
+= TRUE, sep = “,”)</p>
+<p>test &lt;-
+read.csv(“C:/Users/lucas/OneDrive/Documents/GitHub/STAT361-Project/STAT361-Project/dataset/test.csv”,header
+= TRUE,sep = “,”)</p>
+</div>
+<div id="use-stepwise-regression-to-find-the-best-fit-model-starting-with-full-and-null-models" class="section level1">
+<h1>Use stepwise regression to find the best fit model, starting with
+full and null models</h1>
+<p>fullmodel &lt;- lm(medv ~ ., data = train) nullmodel &lt;- lm(medv ~
+1, data = train)</p>
+<p>finalmodel &lt;- step(nullmodel,scope = list(lower = nullmodel, upper
+= fullmodel),direction = “both”)</p>
+</div>
+<div id="display-summary-of-the-final-model" class="section level1">
+<h1>Display summary of the final model</h1>
+<p>summary(finalmodel)</p>
+<p>#Final model has removed any first-order insignificant predictors
+(age and indus)</p>
+</div>
+<div id="update-the-model-to-check-significant-predictors-by-checking-aic" class="section level1">
+<h1>Update the model to check significant predictors by checking
+AIC</h1>
+<p>model &lt;- update(finalmodel, . ~ . + I(lstat^2) + I(lstat^3));
+AIC(model) model &lt;- update(model, . ~ . + (age^3)); AIC(model) model
+&lt;- update(model, . ~ . + I(crim^2) + I(crim^3)); AIC(model) model
+&lt;- update(model, . ~ . + I(zn^2)); AIC(model) model &lt;-
+update(model, . ~ . + I(rm^3)); AIC(model) model &lt;- update(model, . ~
+. + I(dis^2) + I(dis^3)); AIC(model) model &lt;- update(model, . ~ . +
+I(tax^2) + I(tax^3)); AIC(model) model &lt;- update(model, . ~ . +
+I(ptratio^2)); AIC(model) model &lt;- update(model, . ~ . + I(nox^2) +
+I(nox^3)); AIC(model) model &lt;- update(model, . ~ . + I(black^3));
+AIC(model)</p>
+</div>
+<div id="guess-and-check-models-with-specific-predictors" class="section level1">
+<h1>Guess and check models with specific predictors</h1>
+<p>model3 &lt;- update(model, . ~ . + I(black^2) + I(black^3));
+AIC(model3) model2 &lt;- update(model, . ~ . + I(black^2)); AIC(model2)
+model1 &lt;- update(model, . ~ . + I(black^3)); AIC(model1)</p>
+</div>
+<div id="display-summary-of-the-chosen-model" class="section level1">
+<h1>Display summary of the chosen model</h1>
+<p>summary(model)</p>
+</div>
+<div id="indus-is-insignificant" class="section level1">
+<h1>- indus is insignificant</h1>
+</div>
+<div id="rad-and-chas-at-higher-orders-are-also-insignificant" class="section level1">
+<h1>- rad and chas at higher orders are also insignificant</h1>
+</div>
+<div id="get-predicted-and-true-values" class="section level1">
+<h1>Get predicted and true values</h1>
+<p>predicted_values &lt;- model<span class="math inline">\(fitted.values
+true_values &lt;- train\)</span>medv</p>
+</div>
+<div id="display-summary-of-the-model" class="section level1">
+<h1>Display summary of the model</h1>
+<p>summary(model)</p>
+</div>
+<div id="calculate-residuals-directly-from-the-model" class="section level1">
+<h1>Calculate residuals directly from the model</h1>
+<p>residuals &lt;- model$residuals</p>
+</div>
+<div id="compute-rmse" class="section level1">
+<h1>Compute RMSE</h1>
+<p>RMSE &lt;- sqrt(mean(residuals^2)) print(paste(“RMSE:”, RMSE))</p>
+</div>
+<div id="create-the-plot-true-vs.-predicted" class="section level1">
+<h1>Create the plot: True vs. Predicted</h1>
+<p>plot( true_values, predicted_values, main = “True vs Predicted
+Values”, xlab = “True Values (MEDV)”, ylab = “Predicted Values (MEDV)”,
+pch = 16, col = “blue” ) abline(a = 0, b = 1, col = “red”, lwd = 2)</p>
 <!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-source-begin eyJkYXRhIjoiYGBgclxucGxvdChjYXJzKVxuYGBgIn0= -->
-<pre class="r"><code>plot(cars)</code></pre>
-<!-- rnb-source-end -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
-<!-- rnb-chunk-begin -->
-<!-- rnb-chunk-end -->
-<!-- rnb-text-begin -->
-<!-- rnb-text-end -->
+</div>
 
-<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2sgZm9yIHByb2plY3QiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KDQoNCmBgYHtyfQ0KcGxvdChjYXJzKQ0KYGBgDQoNCmBgYHtyfQ0KDQpgYGANCg0K</div>
+<div id="rmd-source-code">LS0tDQp0aXRsZTogIlIgTm90ZWJvb2sgZm9yIHByb2plY3QiDQpvdXRwdXQ6IGh0bWxfbm90ZWJvb2sNCi0tLQ0KIyBSZWFkIGJvdGggdGFibGVzIGludG8gZGF0YXNldA0KdHJhaW4gPC0gcmVhZC50YWJsZSgiQzovVXNlcnMvbHVjYXMvT25lRHJpdmUvRG9jdW1lbnRzL0dpdEh1Yi9TVEFUMzYxLVByb2plY3QvU1RBVDM2MS1Qcm9qZWN0L2RhdGFzZXQvdHJhaW4uY3N2IixoZWFkZXIgPSBUUlVFLCBzZXAgPSAiLCIpDQoNCnRlc3QgPC0gcmVhZC5jc3YoIkM6L1VzZXJzL2x1Y2FzL09uZURyaXZlL0RvY3VtZW50cy9HaXRIdWIvU1RBVDM2MS1Qcm9qZWN0L1NUQVQzNjEtUHJvamVjdC9kYXRhc2V0L3Rlc3QuY3N2IixoZWFkZXIgPSBUUlVFLHNlcCA9ICIsIikNCg0KIyBVc2Ugc3RlcHdpc2UgcmVncmVzc2lvbiB0byBmaW5kIHRoZSBiZXN0IGZpdCBtb2RlbCwgc3RhcnRpbmcgd2l0aCBmdWxsIGFuZCBudWxsIG1vZGVscw0KZnVsbG1vZGVsIDwtIGxtKG1lZHYgfiAuLCBkYXRhID0gdHJhaW4pDQpudWxsbW9kZWwgPC0gbG0obWVkdiB+IDEsIGRhdGEgPSB0cmFpbikNCg0KZmluYWxtb2RlbCA8LSBzdGVwKG51bGxtb2RlbCxzY29wZSA9IGxpc3QobG93ZXIgPSBudWxsbW9kZWwsIHVwcGVyID0gZnVsbG1vZGVsKSxkaXJlY3Rpb24gPSAiYm90aCIpDQoNCiMgRGlzcGxheSBzdW1tYXJ5IG9mIHRoZSBmaW5hbCBtb2RlbA0Kc3VtbWFyeShmaW5hbG1vZGVsKQ0KDQojRmluYWwgbW9kZWwgaGFzIHJlbW92ZWQgYW55IGZpcnN0LW9yZGVyIGluc2lnbmlmaWNhbnQgcHJlZGljdG9ycyAoYWdlIGFuZCBpbmR1cykNCg0KIyBVcGRhdGUgdGhlIG1vZGVsIHRvIGNoZWNrIHNpZ25pZmljYW50IHByZWRpY3RvcnMgYnkgY2hlY2tpbmcgQUlDDQoNCg0KbW9kZWwgPC0gdXBkYXRlKGZpbmFsbW9kZWwsIC4gfiAuICsgSShsc3RhdF4yKSArIEkobHN0YXReMykpOyBBSUMobW9kZWwpDQptb2RlbCA8LSB1cGRhdGUobW9kZWwsIC4gfiAuICsgKGFnZV4zKSk7IEFJQyhtb2RlbCkNCm1vZGVsIDwtIHVwZGF0ZShtb2RlbCwgLiB+IC4gKyBJKGNyaW1eMikgKyBJKGNyaW1eMykpOyBBSUMobW9kZWwpDQptb2RlbCA8LSB1cGRhdGUobW9kZWwsIC4gfiAuICsgSSh6bl4yKSk7IEFJQyhtb2RlbCkNCm1vZGVsIDwtIHVwZGF0ZShtb2RlbCwgLiB+IC4gKyBJKHJtXjMpKTsgQUlDKG1vZGVsKQ0KbW9kZWwgPC0gdXBkYXRlKG1vZGVsLCAuIH4gLiArIEkoZGlzXjIpICsgSShkaXNeMykpOyBBSUMobW9kZWwpDQptb2RlbCA8LSB1cGRhdGUobW9kZWwsIC4gfiAuICsgSSh0YXheMikgKyBJKHRheF4zKSk7IEFJQyhtb2RlbCkNCm1vZGVsIDwtIHVwZGF0ZShtb2RlbCwgLiB+IC4gKyBJKHB0cmF0aW9eMikpOyBBSUMobW9kZWwpDQptb2RlbCA8LSB1cGRhdGUobW9kZWwsIC4gfiAuICsgSShub3heMikgKyBJKG5veF4zKSk7IEFJQyhtb2RlbCkNCm1vZGVsIDwtIHVwZGF0ZShtb2RlbCwgLiB+IC4gKyBJKGJsYWNrXjMpKTsgQUlDKG1vZGVsKQ0KDQojIEd1ZXNzIGFuZCBjaGVjayBtb2RlbHMgd2l0aCBzcGVjaWZpYyBwcmVkaWN0b3JzDQptb2RlbDMgPC0gdXBkYXRlKG1vZGVsLCAuIH4gLiArIEkoYmxhY2teMikgKyBJKGJsYWNrXjMpKTsgQUlDKG1vZGVsMykNCm1vZGVsMiA8LSB1cGRhdGUobW9kZWwsIC4gfiAuICsgSShibGFja14yKSk7IEFJQyhtb2RlbDIpDQptb2RlbDEgPC0gdXBkYXRlKG1vZGVsLCAuIH4gLiArIEkoYmxhY2teMykpOyBBSUMobW9kZWwxKQ0KDQojIERpc3BsYXkgc3VtbWFyeSBvZiB0aGUgY2hvc2VuIG1vZGVsDQpzdW1tYXJ5KG1vZGVsKQ0KDQojIC0gaW5kdXMgaXMgaW5zaWduaWZpY2FudA0KIyAtIHJhZCBhbmQgY2hhcyBhdCBoaWdoZXIgb3JkZXJzIGFyZSBhbHNvIGluc2lnbmlmaWNhbnQNCg0KIyBHZXQgcHJlZGljdGVkIGFuZCB0cnVlIHZhbHVlcw0KcHJlZGljdGVkX3ZhbHVlcyA8LSBtb2RlbCRmaXR0ZWQudmFsdWVzDQp0cnVlX3ZhbHVlcyA8LSB0cmFpbiRtZWR2DQoNCiMgRGlzcGxheSBzdW1tYXJ5IG9mIHRoZSBtb2RlbA0Kc3VtbWFyeShtb2RlbCkNCg0KIyBDYWxjdWxhdGUgcmVzaWR1YWxzIGRpcmVjdGx5IGZyb20gdGhlIG1vZGVsDQpyZXNpZHVhbHMgPC0gbW9kZWwkcmVzaWR1YWxzDQoNCiMgQ29tcHV0ZSBSTVNFDQpSTVNFIDwtIHNxcnQobWVhbihyZXNpZHVhbHNeMikpDQpwcmludChwYXN0ZSgiUk1TRToiLCBSTVNFKSkNCg0KDQojIENyZWF0ZSB0aGUgcGxvdDogVHJ1ZSB2cy4gUHJlZGljdGVkDQpwbG90KA0KICB0cnVlX3ZhbHVlcywgcHJlZGljdGVkX3ZhbHVlcywNCiAgbWFpbiA9ICJUcnVlIHZzIFByZWRpY3RlZCBWYWx1ZXMiLA0KICB4bGFiID0gIlRydWUgVmFsdWVzIChNRURWKSIsDQogIHlsYWIgPSAiUHJlZGljdGVkIFZhbHVlcyAoTUVEVikiLA0KICBwY2ggPSAxNiwgY29sID0gImJsdWUiDQopDQphYmxpbmUoYSA9IDAsIGIgPSAxLCBjb2wgPSAicmVkIiwgbHdkID0gMikNCg==</div>
 
 
 

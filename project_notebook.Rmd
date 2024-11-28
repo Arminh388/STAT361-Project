@@ -2,13 +2,68 @@
 title: "R Notebook for project"
 output: html_notebook
 ---
+# Read both tables into dataset
+train <- read.table("C:/Users/lucas/OneDrive/Documents/GitHub/STAT361-Project/STAT361-Project/dataset/train.csv",header = TRUE, sep = ",")
+
+test <- read.csv("C:/Users/lucas/OneDrive/Documents/GitHub/STAT361-Project/STAT361-Project/dataset/test.csv",header = TRUE,sep = ",")
+
+# Use stepwise regression to find the best fit model, starting with full and null models
+fullmodel <- lm(medv ~ ., data = train)
+nullmodel <- lm(medv ~ 1, data = train)
+
+finalmodel <- step(nullmodel,scope = list(lower = nullmodel, upper = fullmodel),direction = "both")
+
+# Display summary of the final model
+summary(finalmodel)
+
+#Final model has removed any first-order insignificant predictors (age and indus)
+
+# Update the model to check significant predictors by checking AIC
 
 
-```{r}
-plot(cars)
-```
+model <- update(finalmodel, . ~ . + I(lstat^2) + I(lstat^3)); AIC(model)
+model <- update(model, . ~ . + (age^3)); AIC(model)
+model <- update(model, . ~ . + I(crim^2) + I(crim^3)); AIC(model)
+model <- update(model, . ~ . + I(zn^2)); AIC(model)
+model <- update(model, . ~ . + I(rm^3)); AIC(model)
+model <- update(model, . ~ . + I(dis^2) + I(dis^3)); AIC(model)
+model <- update(model, . ~ . + I(tax^2) + I(tax^3)); AIC(model)
+model <- update(model, . ~ . + I(ptratio^2)); AIC(model)
+model <- update(model, . ~ . + I(nox^2) + I(nox^3)); AIC(model)
+model <- update(model, . ~ . + I(black^3)); AIC(model)
 
-```{r}
+# Guess and check models with specific predictors
+model3 <- update(model, . ~ . + I(black^2) + I(black^3)); AIC(model3)
+model2 <- update(model, . ~ . + I(black^2)); AIC(model2)
+model1 <- update(model, . ~ . + I(black^3)); AIC(model1)
 
-```
+# Display summary of the chosen model
+summary(model)
 
+# - indus is insignificant
+# - rad and chas at higher orders are also insignificant
+
+# Get predicted and true values
+predicted_values <- model$fitted.values
+true_values <- train$medv
+
+# Display summary of the model
+summary(model)
+
+# Calculate residuals directly from the model
+residuals <- model$residuals
+
+# Compute RMSE
+RMSE <- sqrt(mean(residuals^2))
+print(paste("RMSE:", RMSE))
+
+
+# Create the plot: True vs. Predicted
+plot(
+  true_values, predicted_values,
+  main = "True vs Predicted Values",
+  xlab = "True Values (MEDV)",
+  ylab = "Predicted Values (MEDV)",
+  pch = 16, col = "blue"
+)
+abline(a = 0, b = 1, col = "red", lwd = 2)
