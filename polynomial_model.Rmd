@@ -6,15 +6,36 @@ output: html_notebook
 
 
 ```{r}
-plot(cars)
+test <- read.csv("\\\\wsl.localhost\\Ubuntu\\home\\armandobean\\STAT361\\STAT361-Project\\dataset\\test.csv")
+
+train <- read.csv("\\\\wsl.localhost\\Ubuntu\\home\\armandobean\\STAT361\\STAT361-Project\\dataset\\train.csv")
+
 ```
 
 
 ```{r}
+# Deg. 2 polynomial model
+
+poly_model <- lm(medv ~ poly(lstat, 2), data = train)
+
+summary(poly_model)
+```
+
+```{r}
+# Add predictions to the dataset
+train$predicted_medv <- predict(poly_model, newdata = train)
+
+# Plot using the corrected column names
+library(ggplot2)
+
+ggplot(train, aes(x = lstat, y = medv)) +
+  geom_point(color = "blue") +
+  geom_line(aes(y = predicted_medv), color = "red") +
+  labs(
+    title = "Polynomial Regression: lstat vs medv",
+    x = "% Lower Status Population (lstat)",
+    y = "Median Home Value (medv)"
+  )
 
 ```
 
-
-When you save the notebook, an HTML file containing the code and output will be saved alongside it (click the *Preview* button or press *Ctrl+Shift+K* to preview the HTML file).
-
-The preview shows you a rendered HTML copy of the contents of the editor. Consequently, unlike *Knit*, *Preview* does not run any R code chunks. Instead, the output of the chunk when it was last run in the editor is displayed.
